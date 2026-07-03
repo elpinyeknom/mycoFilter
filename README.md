@@ -15,7 +15,7 @@ Targets **PAHs · Lead · Pesticide residue**, scaling from a single block to a 
 The full concept — technology architecture, operations model, and economic/policy strategy — lives in two forms:
 
 - **[`BLUEPRINT.md`](./BLUEPRINT.md)** — the complete written blueprint & investment prospectus (Markdown).
-- **`mycofilter-blueprint.html`** — an interactive, styled version with a filterable toxicity-map demo and KPI dashboard. Open it in a browser, or view the hosted version.
+- **[`index.html`](./index.html)** — an interactive, styled version with a filterable toxicity-map demo and KPI dashboard. Once GitHub Pages is enabled, it's live at **https://elpinyeknom.github.io/mycoFilter/**, or open the file directly in a browser.
 
 ---
 

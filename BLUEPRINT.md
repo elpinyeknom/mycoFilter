@@ -194,4 +194,4 @@ Some specific values (the genotype ID `PO-K7`, exact seeding densities) are illu
 
 ---
 
-*An interactive version of this document (with a filterable toxicity-map demo and a live KPI dashboard) is available as `mycofilter-blueprint.html`.*
+*An interactive version of this document (with a filterable toxicity-map demo and a live KPI dashboard) is available as [`index.html`](./index.html) — hosted at https://elpinyeknom.github.io/mycoFilter/ once GitHub Pages is enabled.*
