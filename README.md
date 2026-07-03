@@ -2,6 +2,8 @@
 
 **The Hyper-Local Decentralized Bio-Remediation Network**
 
+> *Mushrooms × plants save the world. This one is a gift to the world.*
+
 An AI-driven system that empowers communities to self-direct bio-mimetic cleanup of contaminated soil and water — using targeted mycelial networks (fungi) and native flora prescribed precisely to each site's unique chemical signature.
 
 Targets **PAHs · Lead · Pesticide residue**, scaling from a single block to a region.
