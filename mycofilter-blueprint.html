@@ -1,0 +1,965 @@
+<style>
+  :root {
+    --paper:#F3F1E9; --surface:#FBFAF5; --surface-2:#EEEBDF;
+    --ink:#1A1712; --ink-2:#48453C; --muted:#6E6A5D;
+    --line:#DCD8C9; --line-strong:#C7C2B0;
+    --accent:#1F6E47; --accent-2:#2C8757; --accent-soft:#E4EEE4;
+    --spore:#9C7C21; --spore-soft:#F0E7C9;
+    --sev-0:#4E9C6B; --sev-1:#C9A83A; --sev-2:#E0863A; --sev-3:#C64A2C; --sev-4:#8E2420;
+    --sev-ink:#ffffff;
+    --shadow:0 1px 2px rgba(26,23,18,.05), 0 8px 28px rgba(26,23,18,.06);
+    --font-display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --font-body:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --wrap:70rem; --text:63rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0F1310; --surface:#161B16; --surface-2:#1D241D;
+      --ink:#ECEADF; --ink-2:#BCB9AB; --muted:#8B8879;
+      --line:#2A312A; --line-strong:#3A423A;
+      --accent:#5FC88A; --accent-2:#7CD9A1; --accent-soft:#17251C;
+      --spore:#D9B44A; --spore-soft:#2A2413;
+      --sev-0:#57AE77; --sev-1:#D6B747; --sev-2:#E8964B; --sev-3:#D65B3C; --sev-4:#B0362F;
+      --sev-ink:#0F1310;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#F3F1E9; --surface:#FBFAF5; --surface-2:#EEEBDF;
+    --ink:#1A1712; --ink-2:#48453C; --muted:#6E6A5D;
+    --line:#DCD8C9; --line-strong:#C7C2B0;
+    --accent:#1F6E47; --accent-2:#2C8757; --accent-soft:#E4EEE4;
+    --spore:#9C7C21; --spore-soft:#F0E7C9;
+    --sev-0:#4E9C6B; --sev-1:#C9A83A; --sev-2:#E0863A; --sev-3:#C64A2C; --sev-4:#8E2420;
+    --sev-ink:#ffffff;
+    --shadow:0 1px 2px rgba(26,23,18,.05), 0 8px 28px rgba(26,23,18,.06);
+  }
+  :root[data-theme="dark"] {
+    --paper:#0F1310; --surface:#161B16; --surface-2:#1D241D;
+    --ink:#ECEADF; --ink-2:#BCB9AB; --muted:#8B8879;
+    --line:#2A312A; --line-strong:#3A423A;
+    --accent:#5FC88A; --accent-2:#7CD9A1; --accent-soft:#17251C;
+    --spore:#D9B44A; --spore-soft:#2A2413;
+    --sev-0:#57AE77; --sev-1:#D6B747; --sev-2:#E8964B; --sev-3:#D65B3C; --sev-4:#B0362F;
+    --sev-ink:#0F1310;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); line-height:1.65;
+    font-size:17px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:var(--wrap); margin:0 auto; padding:0 clamp(20px,5vw,48px); }
+  .text-col { max-width:var(--text); }
+
+  h1,h2,h3,h4 { font-family:var(--font-display); font-weight:600; line-height:1.12; text-wrap:balance; margin:0; }
+  p { margin:0 0 1em; color:var(--ink-2); }
+  p.lede { color:var(--ink); }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  i, em, .sp { font-style:italic; }
+  .sp { font-family:var(--font-display); }
+  strong { color:var(--ink); font-weight:600; }
+
+  .eyebrow {
+    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent); font-weight:500;
+    display:flex; align-items:center; gap:.6em;
+  }
+  .eyebrow::before { content:""; width:1.6em; height:1px; background:var(--accent); display:inline-block; }
+
+  /* ---------- Nav ---------- */
+  header.nav {
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(1.4) blur(12px);
+    background:color-mix(in srgb, var(--paper) 82%, transparent);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner { display:flex; align-items:center; gap:18px; height:60px; }
+  .brand { display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:600; font-size:19px; letter-spacing:-.01em; }
+  .brand .mk { width:22px; height:22px; flex:none; }
+  .brand .mk path, .brand .mk circle { stroke:var(--accent); }
+  nav.links { margin-left:auto; display:flex; gap:4px; }
+  nav.links a {
+    font-size:13.5px; color:var(--ink-2); padding:7px 11px; border-radius:7px;
+    font-family:var(--font-mono); letter-spacing:.02em;
+  }
+  nav.links a:hover { background:var(--surface-2); color:var(--ink); text-decoration:none; }
+  .theme-btn {
+    border:1px solid var(--line-strong); background:var(--surface); color:var(--ink-2);
+    width:34px; height:34px; border-radius:8px; cursor:pointer; font-size:15px;
+    display:grid; place-items:center; flex:none;
+  }
+  .theme-btn:hover { color:var(--ink); border-color:var(--accent); }
+  @media (max-width:820px){ nav.links{display:none;} }
+
+  /* ---------- Hero ---------- */
+  .hero { position:relative; overflow:hidden; border-bottom:1px solid var(--line); }
+  #myco-canvas { position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.5; }
+  .hero .wrap { position:relative; z-index:1; padding-top:clamp(56px,9vw,104px); padding-bottom:clamp(48px,7vw,88px); }
+  .hero h1 { font-size:clamp(38px,6.4vw,74px); letter-spacing:-.02em; margin:.32em 0 .12em; }
+  .hero .sub { font-family:var(--font-display); font-size:clamp(20px,2.6vw,27px); color:var(--accent); font-style:italic; margin-bottom:1.1em; }
+  .hero .lede { font-size:clamp(17px,1.6vw,19.5px); max-width:40rem; }
+  .hero-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+  .tag {
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.03em;
+    padding:6px 12px; border-radius:999px; border:1px solid var(--line-strong);
+    background:var(--surface); color:var(--ink-2);
+  }
+  .tag b { color:var(--accent); font-weight:600; }
+
+  /* ---------- Stat tiles ---------- */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:40px; }
+  @media (max-width:760px){ .stats{ grid-template-columns:repeat(2,1fr);} }
+  .stat {
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:18px 18px 16px; box-shadow:var(--shadow);
+  }
+  .stat .n { font-family:var(--font-display); font-size:clamp(28px,3.6vw,38px); font-weight:600; letter-spacing:-.02em; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1; }
+  .stat .n small { font-size:.5em; color:var(--accent); font-weight:600; margin-left:2px; }
+  .stat .l { font-size:13px; color:var(--muted); margin-top:9px; line-height:1.4; }
+
+  /* ---------- Sections ---------- */
+  section.pillar { padding:clamp(56px,8vw,96px) 0; border-bottom:1px solid var(--line); scroll-margin-top:64px; }
+  .pillar-head { display:flex; gap:20px; align-items:baseline; margin-bottom:8px; }
+  .pillar-num { font-family:var(--font-display); font-size:clamp(30px,4vw,44px); color:var(--line-strong); font-weight:600; line-height:1; flex:none; font-variant-numeric:tabular-nums; }
+  h2.section-title { font-size:clamp(28px,3.8vw,42px); letter-spacing:-.02em; }
+  .section-intro { font-size:clamp(17px,1.5vw,18.5px); margin:18px 0 0; }
+
+  .subhead { margin:52px 0 18px; }
+  .subhead .eyebrow { margin-bottom:9px; }
+  h3.sub-title { font-size:clamp(21px,2.5vw,27px); letter-spacing:-.01em; }
+
+  /* ---------- Cards / grids ---------- */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media (max-width:820px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+  .card {
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:22px 22px; box-shadow:var(--shadow);
+  }
+  .card h4 { font-size:19px; margin-bottom:6px; letter-spacing:-.01em; }
+  .card p:last-child { margin-bottom:0; }
+  .card .kick { font-family:var(--font-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--spore); margin-bottom:11px; }
+
+  ul.clean { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+  ul.clean li { position:relative; padding-left:22px; color:var(--ink-2); font-size:15.5px; line-height:1.55; }
+  ul.clean li::before { content:""; position:absolute; left:2px; top:.62em; width:7px; height:7px; border-radius:2px; background:var(--accent); }
+  ul.clean li strong { color:var(--ink); }
+
+  /* ---------- Data-flow strip ---------- */
+  .flow { display:grid; grid-template-columns:repeat(3,1fr) ; gap:0; margin:8px 0 4px; align-items:stretch; }
+  .flow-step { position:relative; background:var(--surface); border:1px solid var(--line); padding:18px 18px; }
+  .flow-step:first-child{ border-radius:12px 0 0 12px; }
+  .flow-step:last-child{ border-radius:0 12px 12px 0; }
+  .flow-step + .flow-step { border-left:none; }
+  .flow-step .n { font-family:var(--font-mono); font-size:12px; color:var(--accent); letter-spacing:.1em; }
+  .flow-step h4 { font-size:16.5px; margin:6px 0 5px; font-family:var(--font-body); font-weight:600; }
+  .flow-step p { font-size:13.5px; margin:0; color:var(--muted); }
+  .flow-step::after {
+    content:"→"; position:absolute; right:-11px; top:50%; transform:translateY(-50%);
+    z-index:2; color:var(--accent); font-size:18px; background:var(--paper);
+    width:22px; height:22px; display:grid; place-items:center; border-radius:50%;
+  }
+  .flow-step:last-child::after{ display:none; }
+  @media (max-width:760px){
+    .flow{ grid-template-columns:1fr; }
+    .flow-step{ border-radius:0 !important; border-left:1px solid var(--line) !important; }
+    .flow-step:first-child{ border-radius:12px 12px 0 0; }
+    .flow-step:last-child{ border-radius:0 0 12px 12px; }
+    .flow-step + .flow-step{ border-top:none; }
+    .flow-step::after{ content:"↓"; right:50%; top:auto; bottom:-11px; transform:translateX(50%); }
+  }
+
+  /* ---------- Blueprint spec sheet ---------- */
+  .blueprint {
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:16px;
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .bp-top { padding:18px 22px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:16px; background:var(--surface-2); flex-wrap:wrap; }
+  .bp-top .id { font-family:var(--font-mono); font-size:12.5px; color:var(--muted); letter-spacing:.04em; }
+  .bp-top .id b { color:var(--ink); }
+  .bp-badge { font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); border:1px solid var(--accent); padding:4px 9px; border-radius:6px; }
+  .bp-rows { display:grid; grid-template-columns:1fr 1fr; }
+  @media (max-width:760px){ .bp-rows{ grid-template-columns:1fr; } }
+  .bp-cell { padding:18px 22px; border-bottom:1px solid var(--line); }
+  .bp-cell:nth-child(odd){ border-right:1px solid var(--line); }
+  @media (max-width:760px){ .bp-cell:nth-child(odd){ border-right:none; } }
+  .bp-cell .k { font-family:var(--font-mono); font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+  .bp-cell .v { font-size:16px; color:var(--ink); line-height:1.5; }
+  .bp-cell .v .sp { color:var(--accent); font-weight:600; }
+  .bp-cell .v code { font-family:var(--font-mono); font-size:13.5px; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px; }
+  .bp-timeline { padding:20px 22px; }
+  .bp-timeline .k { font-family:var(--font-mono); font-size:11px; letter-spacing:.11em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+  .tl { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
+  @media (max-width:600px){ .tl{ grid-template-columns:1fr 1fr; row-gap:20px; } }
+  .tl-node { position:relative; padding-top:22px; padding-right:12px; }
+  .tl-node::before { content:""; position:absolute; top:6px; left:0; width:12px; height:12px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+  .tl-node::after { content:""; position:absolute; top:11px; left:12px; right:0; height:2px; background:var(--line-strong); }
+  .tl-node:last-child::after{ display:none; }
+  .tl-node .t { font-family:var(--font-mono); font-size:11.5px; color:var(--accent); letter-spacing:.04em; }
+  .tl-node .d { font-size:13.5px; color:var(--ink-2); margin-top:4px; line-height:1.45; }
+
+  /* ---------- Toxicity map ---------- */
+  .mapwrap { background:var(--surface); border:1px solid var(--line-strong); border-radius:16px; padding:20px; box-shadow:var(--shadow); }
+  .map-controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:16px; }
+  .map-controls .label { font-family:var(--font-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-right:4px; }
+  .filter-btn {
+    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.02em;
+    border:1px solid var(--line-strong); background:var(--surface-2); color:var(--ink-2);
+    padding:7px 13px; border-radius:8px; cursor:pointer; transition:.15s;
+  }
+  .filter-btn[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--sev-ink); }
+  .filter-btn:hover{ border-color:var(--accent); }
+  .map-stage { display:grid; grid-template-columns:1fr; gap:16px; }
+  .grid-map { display:grid; gap:3px; width:100%; }
+  .cell { aspect-ratio:1/1; border-radius:4px; cursor:pointer; position:relative; outline:none; transition:transform .12s; box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--paper) 30%, transparent); }
+  .cell:hover, .cell:focus-visible { transform:scale(1.14); z-index:3; box-shadow:0 0 0 2px var(--paper), 0 0 0 3px var(--accent); }
+  .map-side { display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start; justify-content:space-between; }
+  .legend { display:flex; flex-direction:column; gap:8px; }
+  .legend .lt { font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .ramp { display:flex; align-items:center; gap:0; }
+  .ramp .sw { width:34px; height:14px; }
+  .ramp .sw:first-child{ border-radius:4px 0 0 4px; } .ramp .sw:last-child{ border-radius:0 4px 4px 0; }
+  .ramp-labels { display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:10.5px; color:var(--muted); width:170px; margin-top:3px; }
+  .readout { font-family:var(--font-mono); font-size:12.5px; color:var(--ink-2); min-height:20px; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:10px 12px; min-width:210px; }
+  .readout b{ color:var(--ink); }
+  .readout .sev { font-weight:600; }
+
+  /* ---------- Tables ---------- */
+  .table-scroll { overflow-x:auto; border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
+  table { width:100%; border-collapse:collapse; font-size:14.5px; min-width:560px; background:var(--surface); }
+  thead th { text-align:left; font-family:var(--font-mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:500; padding:14px 16px; border-bottom:1px solid var(--line-strong); background:var(--surface-2); }
+  tbody td { padding:14px 16px; border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody td:first-child { color:var(--ink); font-weight:500; }
+  tbody td .wk { font-family:var(--font-mono); font-size:12px; color:var(--accent); }
+
+  /* ---------- Roadmap phases ---------- */
+  .phases { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:820px){ .phases{ grid-template-columns:1fr; } }
+  .phase { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+  .phase::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+  .phase .pn { font-family:var(--font-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); }
+  .phase h4 { font-size:20px; margin:8px 0 4px; }
+  .phase .scope { font-size:13.5px; color:var(--muted); margin-bottom:14px; }
+  .gate { margin-top:16px; padding-top:14px; border-top:1px dashed var(--line-strong); }
+  .gate .gl { font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--spore); margin-bottom:5px; }
+  .gate .gv { font-size:14px; color:var(--ink); font-weight:500; line-height:1.45; }
+
+  /* ---------- Funding ---------- */
+  .fund { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  @media (max-width:820px){ .fund{ grid-template-columns:1fr; } }
+  .fund-card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); }
+  .fund-card .tophdr { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+  .fund-card h4 { font-size:18px; }
+  .chip { font-family:var(--font-mono); font-size:11px; letter-spacing:.03em; padding:4px 9px; border-radius:6px; background:var(--spore-soft); color:var(--spore); white-space:nowrap; }
+  .chip.rev { background:var(--accent-soft); color:var(--accent); }
+  .fund-card p { font-size:14.5px; margin-bottom:0; }
+  .caveat { font-size:13px; color:var(--muted); margin-top:10px; padding-left:22px; position:relative; font-style:italic; }
+  .caveat::before { content:"⚠"; position:absolute; left:0; top:0; font-style:normal; color:var(--spore); }
+
+  /* ---------- Mandate ---------- */
+  .mandate { background:linear-gradient(180deg,var(--accent-soft),transparent); border:1px solid var(--accent); border-radius:16px; padding:26px 26px; }
+  .mandate h3 { color:var(--ink); font-size:24px; margin-bottom:6px; }
+  .mandate .grid-2 { margin-top:18px; }
+
+  /* ---------- KPI dashboard ---------- */
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  @media (max-width:980px){ .kpis{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:480px){ .kpis{ grid-template-columns:1fr; } }
+  .kpi { background:var(--surface); border:1px solid var(--line); border-radius:13px; padding:18px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:6px; }
+  .kpi .ic { width:26px; height:26px; }
+  .kpi .ic path, .kpi .ic circle, .kpi .ic line, .kpi .ic rect, .kpi .ic polyline { stroke:var(--accent); }
+  .kpi .kn { font-family:var(--font-display); font-size:15.5px; font-weight:600; color:var(--ink); line-height:1.2; margin-top:4px; }
+  .kpi .kt { font-size:12.5px; color:var(--muted); line-height:1.4; }
+  .kpi .ktar { font-family:var(--font-mono); font-size:11.5px; color:var(--accent); margin-top:auto; padding-top:6px; }
+
+  /* ---------- Callout ---------- */
+  .callout { border-left:3px solid var(--accent); background:var(--surface); padding:16px 20px; border-radius:0 12px 12px 0; margin:24px 0 0; box-shadow:var(--shadow); }
+  .callout p { margin:0; font-size:15px; }
+
+  /* ---------- Footer ---------- */
+  footer { padding:clamp(48px,7vw,80px) 0 60px; }
+  footer .disc { background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:32px; }
+  footer .disc p { font-size:14px; margin:0; color:var(--ink-2); }
+  footer .disc strong { color:var(--ink); }
+  .src-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px 28px; }
+  @media (max-width:760px){ .src-grid{ grid-template-columns:1fr; } }
+  .src { font-size:13px; color:var(--muted); padding:7px 0; border-bottom:1px solid var(--line); line-height:1.45; }
+  .src b { color:var(--ink-2); font-family:var(--font-display); font-style:italic; }
+  .foot-brand { display:flex; align-items:center; gap:10px; margin-top:34px; color:var(--muted); font-size:13px; font-family:var(--font-mono); }
+  .foot-brand .mk { width:20px; height:20px; }
+  .foot-brand .mk path, .foot-brand .mk circle { stroke:var(--muted); }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <span class="brand">
+      <svg class="mk" viewBox="0 0 24 24" fill="none" stroke-width="1.6" aria-hidden="true">
+        <path d="M12 22 V13" /><path d="M12 15 C9 15 7 13 7 13" /><path d="M12 17 C15 17 17 15 17 15" />
+        <path d="M4 9 C4 5 8 3 12 3 C16 3 20 5 20 9 C20 11 16 11 12 11 C8 11 4 11 4 9 Z" />
+        <circle cx="9" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="14" cy="7.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      MycoFilter
+    </span>
+    <nav class="links">
+      <a href="#mission">Mission</a>
+      <a href="#technology">Technology</a>
+      <a href="#operations">Operations</a>
+      <a href="#viability">Viability</a>
+    </nav>
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle color theme" title="Toggle theme">◐</button>
+  </div>
+</header>
+
+<section class="hero">
+  <canvas id="myco-canvas" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <span class="eyebrow">Bio-Remediation Engine · Blueprint & Prospectus</span>
+    <h1>The soil beneath us is speaking. We built the network to listen — and heal.</h1>
+    <p class="sub">A hyper-local, decentralized bio-remediation network.</p>
+    <p class="lede">MycoFilter is an AI-driven system that empowers communities to self-direct
+      bio-mimetic cleanup of contaminated soil and water — deploying targeted mycelial networks
+      and native flora prescribed precisely to each site's unique chemical signature. It turns
+      residents into bio-engineers and invisible hazards into measurable, reversible ones.</p>
+    <div class="hero-tags">
+      <span class="tag"><b>Targets:</b> PAHs · Lead · Pesticide residue</span>
+      <span class="tag"><b>Method:</b> Myco- + phyto-remediation</span>
+      <span class="tag"><b>Scale:</b> Block → Municipality → Region</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">80–92<small>%</small></div><div class="l">PAH reduction achievable with white-rot fungi over an 8-week cycle in field studies</div></div>
+      <div class="stat"><div class="n">~96<small>%</small></div><div class="l">Screening accuracy of citizen-collected colorimetric lead kits for hazard triage</div></div>
+      <div class="stat"><div class="n">3<small>yr</small></div><div class="l">Prescriptive remediation horizon with Year-1 → Year-3 progress checkpoints</div></div>
+      <div class="stat"><div class="n">10<small>×</small></div><div class="l">Faster to first action than centralized, permit-bound cleanup pipelines</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILLAR I ============ -->
+<section class="pillar" id="mission">
+  <div class="wrap text-col">
+    <div class="pillar-head">
+      <span class="pillar-num">I</span>
+      <div>
+        <span class="eyebrow">Mission &amp; Problem Validation</span>
+        <h2 class="section-title" style="margin-top:8px">Millions live atop hazards they cannot see, waiting on a system that will never arrive.</h2>
+      </div>
+    </div>
+    <p class="section-intro lede">Heavy metals, hydrocarbons, and pesticide residue accumulate in
+      neighborhood soil and groundwater from industrial runoff, aging infrastructure, and decades of
+      systemic neglect. The contamination is <strong>invisible, chronic, and hyper-local</strong> —
+      concentrations can swing an order of magnitude between two adjacent lots.</p>
+
+    <div class="grid-2" style="margin-top:34px">
+      <div class="card">
+        <div class="kick">Why centralized cleanup fails</div>
+        <ul class="clean">
+          <li><strong>Too centralized</strong> — one agency, one lab, one queue for thousands of distinct micro-sites.</li>
+          <li><strong>Too slow</strong> — remediation orders move on a decade-long bureaucratic clock while exposure continues.</li>
+          <li><strong>Chemically blind to variance</strong> — a single "site average" erases the parcel-by-parcel reality residents actually live in.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="kick">The MycoFilter inversion</div>
+        <ul class="clean">
+          <li><strong>Decentralized sensing</strong> — the people standing on the contamination generate the data.</li>
+          <li><strong>Biological, not industrial</strong> — living fungal + plant systems break down and sequester toxins in place.</li>
+          <li><strong>Prescriptive, not advisory</strong> — every site receives an exact, executable remediation recipe, not a warning.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout"><p><strong>The thesis:</strong> contamination is a data problem wearing a chemistry problem's clothes.
+      Solve the hyper-local sensing and the prescriptive matching, and a community can remediate itself faster,
+      cheaper, and more precisely than any centralized authority ever could.</p></div>
+  </div>
+</section>
+
+<!-- ============ PILLAR II ============ -->
+<section class="pillar" id="technology">
+  <div class="wrap">
+    <div class="pillar-head text-col">
+      <span class="pillar-num">II</span>
+      <div>
+        <span class="eyebrow">Technology · System Architecture</span>
+        <h2 class="section-title" style="margin-top:8px">From a colorimetric strip in a backyard to a genotype-level biological prescription.</h2>
+      </div>
+    </div>
+    <p class="section-intro lede text-col">Three layers move data up a fidelity gradient: crude citizen
+      capture is normalized into machine-readable signatures, matched by the AI engine to a prescriptive
+      biological blueprint, and aggregated back down into a living neighborhood map.</p>
+
+    <!-- Layer 1: Data ingestion -->
+    <div class="subhead text-col">
+      <span class="eyebrow">Layer 1 · Data Ingestion &amp; Quantification</span>
+      <h3 class="sub-title">The DIY testing protocol — simple enough for anyone, structured enough for the model.</h3>
+    </div>
+    <div class="text-col"><p>The gap between "a resident with a $12 kit" and "AI-grade input" is bridged by
+      standardizing the <em>chemistry</em> at capture and the <em>optics</em> at upload. Each kit targets a
+      contaminant class with an established colorimetric reaction; a printed reference card turns any smartphone
+      camera into a calibrated colorimeter.</p></div>
+
+    <div class="grid-3" style="margin-top:8px">
+      <div class="card">
+        <div class="kick">Kit A · Lead (Pb)</div>
+        <h4>Rhodizonate strip</h4>
+        <p>Sodium-rhodizonate reagent turns pink→scarlet with Pb²⁺; a sulfide back-test confirms via a black precipitate. Reads a hazard threshold around <strong>400 ppm</strong> reliably for triage.</p>
+      </div>
+      <div class="card">
+        <div class="kick">Kit B · PAHs / Hydrocarbons</div>
+        <h4>Solvent-extract fluorescence</h4>
+        <p>A simple solvent shake-extract plus a UV keychain lamp: aromatic hydrocarbons fluoresce; intensity banding maps to low / medium / high loading of petroleum residue.</p>
+      </div>
+      <div class="card">
+        <div class="kick">Kit C · Pesticide groups</div>
+        <h4>Enzyme-inhibition card</h4>
+        <p>A cholinesterase-inhibition pad (organophosphate / carbamate classes) suppresses a color-forming reaction — less color, more inhibition, higher residue.</p>
+      </div>
+    </div>
+
+    <div class="callout text-col"><p><strong>The citizen → AI bridge.</strong> Colorimetric kits alone are subjective and
+      unreliable near thresholds. MycoFilter closes that gap with a <strong>printed color-reference card</strong> photographed
+      beside every sample: the app extracts <span class="sp" style="font-style:normal">RGB</span> values, white-balances against the
+      reference swatches to cancel lighting and camera variance, and feeds an <strong>ML regression</strong> that outputs a normalized
+      concentration band. Crude input, standardized output.</p></div>
+
+    <div style="margin-top:26px" class="text-col">
+      <p style="font-family:var(--font-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:12px;">Data flow</p>
+    </div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="n">01 · CAPTURE</div>
+        <h4>Citizen upload</h4>
+        <p>Strip + reference card photographed in-app, auto-tagged with GPS, depth, and timestamp.</p>
+      </div>
+      <div class="flow-step">
+        <div class="n">02 · VALIDATE</div>
+        <h4>Trust &amp; normalize</h4>
+        <p>Reference-card white-balance, duplicate/outlier detection, geo-plausibility and cross-sample consensus scoring.</p>
+      </div>
+      <div class="flow-step">
+        <div class="n">03 · QUANTIFY</div>
+        <h4>Toxicity reading</h4>
+        <p>ML regression emits a per-contaminant concentration band + confidence, ready for the mapping and AI layers.</p>
+      </div>
+    </div>
+
+    <!-- Layer 2: AI engine -->
+    <div class="subhead text-col">
+      <span class="eyebrow">Layer 2 · The MycoFilter AI Engine</span>
+      <h3 class="sub-title">Predictive Bio-Mapping — the decision engine that turns toxicity into biology.</h3>
+    </div>
+    <div class="text-col"><p>The core algorithm, <strong>Predictive Bio-Mapping</strong>, ingests the validated
+      contamination signature and fuses it with local context — <strong>climate normals, soil texture &amp; pH
+      estimates, hydrology, and season</strong> — then matches against a knowledge base of remediation species
+      performance to synthesize a single, executable <em>Mycoremediation Blueprint</em>. The output is never vague:
+      it is a spec sheet a resident can plant from this weekend.</p></div>
+
+    <div class="blueprint" style="margin-top:8px">
+      <div class="bp-top">
+        <div class="id">BLUEPRINT <b>#PZ-014</b> · Lot signature: Pb 620 ppm · PAH high · pH 6.4 · loam</div>
+        <span class="bp-badge">Predictive Bio-Mapping · v-out</span>
+      </div>
+      <div class="bp-rows">
+        <div class="bp-cell">
+          <div class="k">Primary mycelium · species / strain</div>
+          <div class="v"><span class="sp">Pleurotus ostreatus</span> — cold-tolerant genotype <code>PO-K7</code>, inoculated on sterilized straw substrate for aggressive PAH ligninolytic breakdown.</div>
+        </div>
+        <div class="bp-cell">
+          <div class="k">Deep-root native plant pairing</div>
+          <div class="v"><span class="sp">Brassica juncea</span> (Pb/Cd shoot hyperaccumulator) intercropped with <span class="sp">Helianthus annuus</span> for rhizosphere reach and metal uptake.</div>
+        </div>
+        <div class="bp-cell">
+          <div class="k">Planting depth &amp; substrate placement</div>
+          <div class="v">Mycelial mat at <code>10–15 cm</code>; plant seed at <code>1.5 cm</code>. Fungal layer set below the metal-uptake root zone for synergistic breakdown.</div>
+        </div>
+        <div class="bp-cell">
+          <div class="k">Seeding density &amp; water-flow control</div>
+          <div class="v"><code>18 plants/m²</code> mustard, <code>4 plants/m²</code> sunflower; contoured swale to hold flow &lt; 2 cm/hr and prevent contaminant migration off-lot.</div>
+        </div>
+      </div>
+      <div class="bp-timeline">
+        <div class="k">Estimated timescale &amp; progress checkpoints</div>
+        <div class="tl">
+          <div class="tl-node"><div class="t">MONTH 0–3</div><div class="d">Inoculate &amp; establish. Baseline re-test. Mycelial colonization confirmed.</div></div>
+          <div class="tl-node"><div class="t">YEAR 1</div><div class="d">First harvest of accumulator biomass; target ≥ 30% PAH drop, measurable Pb in shoots.</div></div>
+          <div class="tl-node"><div class="t">YEAR 2</div><div class="d">Second cycle; cumulative ≥ 60% PAH, staged Pb draw-down. Re-prescribe if plateaued.</div></div>
+          <div class="tl-node"><div class="t">YEAR 3</div><div class="d">Verification cycle; lab-confirm against residential thresholds; certify or extend.</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="caveat text-col" style="margin-top:14px">Fungal degradation efficiency is load-dependent — near-complete at low
+      contamination but markedly slower at high concentrations, which is why blueprints stage over multi-year cycles and re-prescribe at each checkpoint.</p>
+
+    <!-- Layer 3: Map -->
+    <div class="subhead text-col">
+      <span class="eyebrow">Layer 3 · Visualization &amp; Mapping</span>
+      <h3 class="sub-title">The Hyper-Local Toxicity Map — every household reading, one living surface.</h3>
+    </div>
+    <div class="text-col"><p>Individual readings aggregate into a real-time, interactive GIS layer. Residents filter
+      by contaminant class and read severity as a concentration-gradient heat map — making the invisible legible at a glance,
+      and turning scattered backyard tests into collective, block-level intelligence. <em>Interactive demo — select a contaminant, hover a parcel:</em></p></div>
+
+    <div class="mapwrap">
+      <div class="map-controls">
+        <span class="label">Contaminant</span>
+        <button class="filter-btn" data-c="lead" aria-pressed="true">Lead (Pb)</button>
+        <button class="filter-btn" data-c="pah" aria-pressed="false">PAHs</button>
+        <button class="filter-btn" data-c="pest" aria-pressed="false">Pesticide</button>
+        <button class="filter-btn" data-c="composite" aria-pressed="false">Composite index</button>
+      </div>
+      <div class="map-stage">
+        <div class="grid-map" id="gridMap" role="img" aria-label="Neighborhood toxicity heat map grid"></div>
+        <div class="map-side">
+          <div class="legend">
+            <span class="lt">Concentration gradient</span>
+            <div class="ramp">
+              <span class="sw" style="background:var(--sev-0)"></span>
+              <span class="sw" style="background:var(--sev-1)"></span>
+              <span class="sw" style="background:var(--sev-2)"></span>
+              <span class="sw" style="background:var(--sev-3)"></span>
+              <span class="sw" style="background:var(--sev-4)"></span>
+            </div>
+            <div class="ramp-labels"><span>Clean</span><span>Severe</span></div>
+          </div>
+          <div class="readout" id="mapReadout">Hover or focus a parcel to inspect its reading.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILLAR III ============ -->
+<section class="pillar" id="operations">
+  <div class="wrap">
+    <div class="pillar-head text-col">
+      <span class="pillar-num">III</span>
+      <div>
+        <span class="eyebrow">Operations · Social Sustainability</span>
+        <h2 class="section-title" style="margin-top:8px">From app concept to a functioning bio-engineering movement.</h2>
+      </div>
+    </div>
+    <p class="section-intro lede text-col">Technology only remediates soil if people plant it. MycoFilter scales
+      through a staged roadmap with hard advancement gates, a curriculum that converts data users into cultivators,
+      and a distributed governance layer that coordinates planting across households.</p>
+
+    <div class="subhead text-col">
+      <span class="eyebrow">Implementation Roadmap</span>
+      <h3 class="sub-title">Three phases — each unlocked by a single, non-negotiable success metric.</h3>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <div class="pn">Phase 1</div>
+        <h4>The Pilot Zone</h4>
+        <div class="scope">A single high-contamination block — dense data, tight feedback loop, maximum learning per m².</div>
+        <p style="font-size:14.5px">Prove the full loop end-to-end on one block: kit → map → blueprint → planting → re-test. Recruit founding Block Stewards and validate the AI prescriptions against lab reference samples.</p>
+        <div class="gate">
+          <div class="gl">Gate to advance</div>
+          <div class="gv">≥ 25% measured reduction in the target pollutant on ≥ 3 parcels, lab-confirmed, within 12 months.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pn">Phase 2</div>
+        <h4>Municipal Rollout</h4>
+        <div class="scope">A neighborhood cluster — multiple blocks, shared watershed, coordinated planting cycles.</div>
+        <p style="font-size:14.5px">Scale governance and logistics: steward-training pipeline, bulk substrate/seed supply, and a municipal data-sharing agreement. The map becomes a civic instrument.</p>
+        <div class="gate">
+          <div class="gl">Gate to advance</div>
+          <div class="gv">≥ 60% of enrolled parcels reach their Year-1 checkpoint <em>and</em> a self-sustaining steward-to-resident ratio of 1:15.</div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="pn">Phase 3</div>
+        <h4>Regional System</h4>
+        <div class="scope">Cross-municipal network — shared model, portable protocol, policy leverage.</div>
+        <p style="font-size:14.5px">The knowledge base compounds: every completed blueprint sharpens the next region's prescriptions. Revenue streams and the Community Remediation Mandate carry the system past grant dependency.</p>
+        <div class="gate">
+          <div class="gl">Gate to sustain</div>
+          <div class="gv">Operating costs covered ≥ 70% by non-grant revenue, with two municipalities adopting the Mandate framework.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subhead text-col">
+      <span class="eyebrow">Community Stewardship Module</span>
+      <h3 class="sub-title">A curriculum that turns residents into bio-engineers.</h3>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Workshop</th><th>Focus</th><th>Skills earned</th><th>Cadence</th></tr></thead>
+        <tbody>
+          <tr><td>Reading the Ground</td><td>Kit use, sampling grid, uploading calibrated readings</td><td>Certified data collection</td><td><span class="wk">Week 1</span></td></tr>
+          <tr><td>Mycelium Basics</td><td>Sterile technique, spawn on straw substrate, colonization &amp; troubleshooting</td><td>Home cultivation of inoculum</td><td><span class="wk">Weeks 2–3</span></td></tr>
+          <tr><td>Planting the Blueprint</td><td>Depth, density, accumulator + fungus intercropping, water-flow contouring</td><td>Field installation</td><td><span class="wk">Week 4</span></td></tr>
+          <tr><td>Tending the System</td><td>Moisture, seasonal maintenance, biomass harvest &amp; safe disposal</td><td>Ongoing stewardship</td><td><span class="wk">Weeks 5–8</span></td></tr>
+          <tr><td>Steward Certification</td><td>Coordination, re-testing protocol, mentoring new residents</td><td>Block Steward credential</td><td><span class="wk">Week 9</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="subhead text-col">
+      <span class="eyebrow">Governance Model</span>
+      <h3 class="sub-title">Block Stewards — the human coordination layer.</h3>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="kick">Role</div>
+        <h4>The Block Steward</h4>
+        <p>A certified resident accountable for one block (~15 households). The connective tissue between the platform's prescriptions and the ground.</p>
+      </div>
+      <div class="card">
+        <div class="kick">Responsibilities</div>
+        <ul class="clean" style="margin-top:2px">
+          <li>Own the block's data quality &amp; re-testing schedule</li>
+          <li>Distribute substrate, spawn, and seed per blueprint</li>
+          <li>Mentor and certify new resident cultivators</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="kick">Coordination</div>
+        <h4>Synchronized cycles</h4>
+        <p>Stewards align planting to a shared seasonal calendar so adjacent lots remediate as one hydrological unit — preventing recontamination across property lines and pooling harvest logistics.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILLAR IV ============ -->
+<section class="pillar" id="viability">
+  <div class="wrap">
+    <div class="pillar-head text-col">
+      <span class="pillar-num">IV</span>
+      <div>
+        <span class="eyebrow">Viability · Economics &amp; Policy</span>
+        <h2 class="section-title" style="margin-top:8px">To outlast neglect, MycoFilter must fund itself and rewrite the rules.</h2>
+      </div>
+    </div>
+    <p class="section-intro lede text-col">Grant capital seeds the pilot; it cannot sustain a region. The model
+      stands on diversified non-governmental revenue, a legislative wedge that legitimizes citizen-led cleanup, and
+      instrumented KPIs that make impact — and investment — measurable.</p>
+
+    <div class="subhead text-col">
+      <span class="eyebrow">Funding Model</span>
+      <h3 class="sub-title">Four non-governmental revenue streams.</h3>
+    </div>
+    <div class="fund">
+      <div class="fund-card">
+        <div class="tophdr"><h4>Precision Soil Consulting</h4><span class="chip rev">Primary revenue</span></div>
+        <p>Fee-based site assessment &amp; certification for property owners, realtors, and developers who need a defensible, parcel-level contamination profile and a remediation certificate that clears a sale or build.</p>
+      </div>
+      <div class="fund-card">
+        <div class="tophdr"><h4>Educational Licensing</h4><span class="chip rev">Recurring revenue</span></div>
+        <p>License the curriculum, kit design, and platform to schools, universities, and other municipalities as a turnkey "remediation-in-a-box," with per-seat certification fees for the Block Steward credential.</p>
+      </div>
+      <div class="fund-card">
+        <div class="tophdr"><h4>Remediation Carbon &amp; Impact Credits</h4><span class="chip">Emerging</span></div>
+        <p>Monetize verified soil-carbon gains and restored-land impact on the voluntary market, bundled with the platform's built-in MRV (measurement, reporting &amp; verification) data trail.</p>
+        <p class="caveat">Soil-carbon MRV methodology is still immature and prices swing from &lt;$1 to hundreds per tonne — treated as upside, never the anchor.</p>
+      </div>
+      <div class="fund-card">
+        <div class="tophdr"><h4>Biomass &amp; Data Services</h4><span class="chip">Diversifying</span></div>
+        <p>Recovered accumulator biomass feeds metal-reclamation partners; anonymized, aggregated toxicity data licenses to researchers, insurers, and urban-planning agencies pricing environmental risk.</p>
+      </div>
+    </div>
+
+    <div class="subhead text-col">
+      <span class="eyebrow">Regulatory Strategy &amp; Advocacy</span>
+      <h3 class="sub-title">The one law that changes everything.</h3>
+    </div>
+    <div class="mandate">
+      <span class="eyebrow" style="color:var(--accent)">The critical policy ask</span>
+      <h3 style="margin-top:8px">The Community Remediation Mandate</h3>
+      <p style="color:var(--ink-2); max-width:44rem">A legal framework that grants formal legitimacy to citizen-led, protocol-compliant
+        bio-remediation — creating a fast lane that bypasses the decades-long inaction of traditional cleanup bureaucracy while
+        preserving safety through standardized methods and mandatory lab verification at closure.</p>
+      <div class="grid-2">
+        <div class="card">
+          <div class="kick">What it establishes</div>
+          <ul class="clean" style="margin-top:2px">
+            <li><strong>Right to remediate</strong> — residents may treat their own soil under a certified protocol without a multi-year permit.</li>
+            <li><strong>Data standing</strong> — calibrated citizen readings are admissible as official screening evidence.</li>
+            <li><strong>Verified closure</strong> — accredited-lab confirmation certifies a parcel as remediated.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="kick">The advocacy path</div>
+          <ul class="clean" style="margin-top:2px">
+            <li>Prove safety &amp; efficacy in the Pilot Zone with lab-verified results.</li>
+            <li>Pass a municipal ordinance first; use it as the template for state legislation.</li>
+            <li>Coalition of public-health, environmental-justice, and property-value stakeholders.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="subhead text-col">
+      <span class="eyebrow">Performance Metrics</span>
+      <h3 class="sub-title">Five KPIs — the instrument panel for impact and investment.</h3>
+    </div>
+    <div class="kpis">
+      <div class="kpi">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="1.7" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 6"/><polyline points="15 6 21 6 21 12"/></svg>
+        <div class="kn">ppm draw-down</div>
+        <div class="kt">Reduction of each target pollutant vs. baseline, per parcel, over time.</div>
+        <div class="ktar">Target: ≥ 50% by Yr 3</div>
+      </div>
+      <div class="kpi">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="1.7" aria-hidden="true"><path d="M12 3 L20 7 V12 C20 17 16 20 12 21 C8 20 4 17 4 12 V7 Z"/><path d="M9 12 l2 2 l4 -4"/></svg>
+        <div class="kn">Stewards certified</div>
+        <div class="kt">Residents credentialed as active Block Stewards across the network.</div>
+        <div class="ktar">Ratio goal: 1 : 15</div>
+      </div>
+      <div class="kpi">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+        <div class="kn">m² under remediation</div>
+        <div class="kt">Total active treated area with a live, in-progress blueprint.</div>
+        <div class="ktar">Coverage &amp; reach</div>
+      </div>
+      <div class="kpi">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="1.7" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <div class="kn">Cost per m²</div>
+        <div class="kt">Fully-loaded remediation cost benchmarked against conventional dig-and-haul.</div>
+        <div class="ktar">Target: &lt; 20% of baseline</div>
+      </div>
+      <div class="kpi">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+        <div class="kn">Checkpoint hit-rate</div>
+        <div class="kt">Share of active blueprints meeting their Year-1 progress checkpoint on schedule.</div>
+        <div class="ktar">Target: ≥ 70%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap text-col">
+    <div class="disc">
+      <p><strong>Method &amp; safety note.</strong> Citizen colorimetric screening is designed for triage and prioritization,
+        not as a substitute for accredited laboratory analysis. Every remediation is opened and closed against
+        lab-verified thresholds before any land-use or health decision. Remediation figures are drawn from published
+        mycoremediation and phytoremediation field studies and are load- and site-dependent; blueprints stage over
+        multi-year cycles precisely because real-world efficiency varies.</p>
+    </div>
+    <span class="eyebrow">Grounding &amp; further reading</span>
+    <div class="src-grid" style="margin-top:16px">
+      <div class="src"><b>Pleurotus</b> spp. petroleum-hydrocarbon &amp; PAH mycoremediation efficiency and scale-up factors — <span style="font-family:var(--font-mono);font-size:12px">PMC10745009</span></div>
+      <div class="src"><b>Brassica juncea</b> heavy-metal phytoremediation capability &amp; shoot accumulation — <span style="font-family:var(--font-mono);font-size:12px">PMC6770704</span></div>
+      <div class="src"><b>Helianthus annuus</b> &amp; hyperaccumulator status of Pb / Cd / Zn — <span style="font-family:var(--font-mono);font-size:12px">arXiv 2312.14288</span></div>
+      <div class="src">Validation of citizen colorimetric lead screening kits (sensitivity / specificity) — <span style="font-family:var(--font-mono);font-size:12px">ScienceDirect S0013935119306899</span></div>
+      <div class="src">Field colorimetric (rhodizonate) soil-lead screening procedure — <span style="font-family:var(--font-mono);font-size:12px">ACS Anal. Chem. 9b00681</span></div>
+      <div class="src">Smartphone RGB + reference-card colorimetry with ML calibration — <span style="font-family:var(--font-mono);font-size:12px">ACS Omega 8b00625 · PMC11144757</span></div>
+      <div class="src">Voluntary soil-carbon credit markets &amp; MRV methodology uncertainty — <span style="font-family:var(--font-mono);font-size:12px">Earth.Org · Tandfonline 2025.2561262</span></div>
+    </div>
+    <div class="foot-brand">
+      <svg class="mk" viewBox="0 0 24 24" fill="none" stroke-width="1.6" aria-hidden="true">
+        <path d="M12 22 V13" /><path d="M12 15 C9 15 7 13 7 13" /><path d="M12 17 C15 17 17 15 17 15" />
+        <path d="M4 9 C4 5 8 3 12 3 C16 3 20 5 20 9 C20 11 16 11 12 11 C8 11 4 11 4 9 Z" />
+      </svg>
+      MycoFilter · Bio-Remediation Engine — Blueprint &amp; Investment Prospectus
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* ---------- Theme toggle ---------- */
+  var root = document.documentElement, btn = document.getElementById('themeToggle');
+  function current(){
+    var t = root.getAttribute('data-theme');
+    if(t) return t;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  btn.addEventListener('click', function(){
+    var next = current() === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    drawMyco(); buildGrid(activeC);
+  });
+
+  /* ---------- Smooth nav ---------- */
+  document.querySelectorAll('nav.links a, .brand').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var href = a.getAttribute('href'); if(!href||href[0]!=='#') return;
+      var el = document.querySelector(href); if(!el) return;
+      e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  function cssv(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+
+  /* ---------- Toxicity heat map ---------- */
+  var COLS = 14, ROWS = 8, N = COLS*ROWS;
+  var grid = document.getElementById('gridMap');
+  var readout = document.getElementById('mapReadout');
+  grid.style.gridTemplateColumns = 'repeat('+COLS+',1fr)';
+
+  // deterministic pseudo-random field so hotspots feel geographic
+  function field(seed){
+    var arr = new Array(N);
+    // a couple of contamination "sources"
+    var sources = [
+      {x: COLS*0.24, y: ROWS*0.32, amp: 1.0, r: 5.5},
+      {x: COLS*0.72, y: ROWS*0.68, amp: 0.85, r: 6.5},
+      {x: COLS*0.86, y: ROWS*0.15, amp: 0.6, r: 4}
+    ];
+    for(var r=0;r<ROWS;r++){ for(var c=0;c<COLS;c++){
+      var v=0;
+      for(var s=0;s<sources.length;s++){
+        var dx=c-sources[s].x, dy=r-sources[s].y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        v += sources[s].amp * Math.exp(-(d*d)/(2*sources[s].r*sources[s].r*(0.5+seed*0.35)));
+      }
+      // stable jitter
+      var j = (Math.sin((r*COLS+c)*(12.9898+seed*3.1)) * 43758.5453);
+      j = j - Math.floor(j);
+      v = v*0.86 + j*0.16 - seed*0.04;
+      arr[r*COLS+c] = Math.max(0, Math.min(1, v));
+    }}
+    return arr;
+  }
+  var fields = {
+    lead: field(0.2), pah: field(0.75), pest: field(1.25)
+  };
+  fields.composite = fields.lead.map(function(v,i){
+    return Math.max(0, Math.min(1,(v*0.45 + fields.pah[i]*0.35 + fields.pest[i]*0.30)));
+  });
+
+  var META = {
+    lead:{name:'Lead (Pb)', unit:'ppm', max:1400},
+    pah:{name:'PAHs', unit:'mg/kg', max:120},
+    pest:{name:'Pesticide', unit:'µg/kg', max:900},
+    composite:{name:'Composite index', unit:'idx', max:100}
+  };
+  var SEVLABEL = ['Clean','Low','Moderate','High','Severe'];
+  function sevIndex(v){ return Math.min(4, Math.floor(v*5 + 0.0001)); }
+  function sevColor(v){ return cssv('--sev-'+sevIndex(v)); }
+
+  var activeC = 'lead';
+  function buildGrid(c){
+    var f = fields[c], m = META[c];
+    grid.innerHTML='';
+    for(var i=0;i<N;i++){
+      (function(i){
+        var v = f[i];
+        var cell = document.createElement('div');
+        cell.className='cell';
+        cell.style.background = sevColor(v);
+        cell.setAttribute('tabindex','0');
+        var val = Math.round(v*m.max);
+        var si = sevIndex(v);
+        var r = Math.floor(i/COLS)+1, col=(i%COLS)+1;
+        var label = 'Parcel '+String.fromCharCode(64+r)+col+' · '+m.name+' '+val+' '+m.unit+' · '+SEVLABEL[si];
+        cell.setAttribute('aria-label', label);
+        function show(){
+          readout.innerHTML = '<b>Parcel '+String.fromCharCode(64+r)+col+'</b> · '+m.name+': <b>'+val+' '+m.unit+
+            '</b> · <span class="sev" style="color:'+sevColor(v)+'">'+SEVLABEL[si]+'</span>';
+        }
+        cell.addEventListener('mouseenter', show);
+        cell.addEventListener('focus', show);
+        grid.appendChild(cell);
+      })(i);
+    }
+  }
+  document.querySelectorAll('.filter-btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.filter-btn').forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true');
+      activeC = b.getAttribute('data-c');
+      buildGrid(activeC);
+      var m = META[activeC];
+      readout.innerHTML = 'Showing <b>'+m.name+'</b> — hover or focus a parcel to inspect.';
+    });
+  });
+  buildGrid(activeC);
+
+  /* ---------- Hero mycelium canvas ---------- */
+  var canvas = document.getElementById('myco-canvas');
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var raf=null, tips=[], edges=[];
+
+  function resize(){
+    var host = canvas.parentElement;
+    var dpr = Math.min(2, window.devicePixelRatio||1);
+    canvas.width = host.offsetWidth*dpr;
+    canvas.height = host.offsetHeight*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function seedNetwork(){
+    var w = canvas.parentElement.offsetWidth, h = canvas.parentElement.offsetHeight;
+    tips=[]; edges=[];
+    var seeds = Math.max(5, Math.round(w/220));
+    for(var i=0;i<seeds;i++){
+      var x = (i+0.5)*(w/seeds) + (Math.random()-0.5)*80;
+      var y = h*(0.15+Math.random()*0.75);
+      var a = Math.random()*Math.PI*2;
+      tips.push({x:x,y:y,a:a,life:0,max:60+Math.random()*40,gen:0});
+    }
+    return {w:w,h:h};
+  }
+
+  function grow(dim){
+    var next=[];
+    tips.forEach(function(t){
+      if(t.life>=t.max) return;
+      var nx = t.x + Math.cos(t.a)*3.2;
+      var ny = t.y + Math.sin(t.a)*3.2;
+      edges.push({x1:t.x,y1:t.y,x2:nx,y2:ny,gen:t.gen});
+      t.a += (Math.random()-0.5)*0.5;
+      t.x=nx; t.y=ny; t.life++;
+      if(t.x<-20||t.x>dim.w+20||t.y<-20||t.y>dim.h+20){ t.life=t.max; }
+      next.push(t);
+      if(t.life<t.max && t.gen<4 && Math.random()<0.045){
+        next.push({x:t.x,y:t.y,a:t.a+(Math.random()<0.5?1:-1)*(0.5+Math.random()*0.6),
+          life:t.life, max:t.max*0.8, gen:t.gen+1});
+      }
+    });
+    tips = next.slice(0,600);
+  }
+
+  function render(){
+    var col = cssv('--accent');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.lineCap='round';
+    edges.forEach(function(e){
+      ctx.strokeStyle = col;
+      ctx.globalAlpha = Math.max(0.04, 0.22 - e.gen*0.035);
+      ctx.lineWidth = Math.max(0.5, 1.6 - e.gen*0.3);
+      ctx.beginPath(); ctx.moveTo(e.x1,e.y1); ctx.lineTo(e.x2,e.y2); ctx.stroke();
+    });
+    // spore nodes at active tips
+    ctx.globalAlpha=0.5;
+    tips.forEach(function(t){
+      if(t.life<t.max){ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(t.x,t.y,1.3,0,7); ctx.fill(); }
+    });
+    ctx.globalAlpha=1;
+  }
+
+  function drawMyco(){
+    if(raf) cancelAnimationFrame(raf);
+    resize();
+    var dim = seedNetwork();
+    if(reduce){
+      for(var s=0;s<70;s++) grow(dim);
+      render(); return;
+    }
+    var steps=0;
+    (function step(){
+      grow(dim); render(); steps++;
+      if(steps<80){ raf=requestAnimationFrame(step); }
+    })();
+  }
+
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(drawMyco,180); });
+  drawMyco();
+})();
+</script>
