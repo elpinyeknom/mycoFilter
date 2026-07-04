@@ -21,7 +21,22 @@ The full concept — technology architecture, operations model, and economic/pol
 
 ## 🚦 Project Status
 
-**Stage: Concept & blueprint.** This repository currently holds the design document. The MycoFilter software product (citizen data-capture app, ML calibration pipeline, Predictive Bio-Mapping engine, and live GIS map) has **not been built yet** — see the roadmap below.
+**Stage: Vertical slice (local dev).** The blueprint is published, and a first working slice of the software now runs locally: upload a strip+reference-card photo, tap the two color zones, get a normalized reading stored in a database and plotted on a live map. See "Running locally" below. Hosted deployment, real computer-vision card detection, and lab-validated calibration are still ahead — see the roadmap.
+
+---
+
+## 🖥️ Running locally
+
+```bash
+npm install
+npm run dev
+```
+
+Then open `http://localhost:3000` to submit a reading, or `http://localhost:3000/map` to view the live map. Data is stored in a local SQLite file (`data/mycofilter.db`) and uploaded photos in `public/uploads/` — both gitignored, nothing leaves your machine.
+
+**Known simplifications in this slice** (see `app/api/readings/route.ts` and `lib/colorimetry.ts`):
+- Reference-card and test-strip regions are located by the user tapping the photo, not by automatic marker detection.
+- The lead ppm calibration curve is a **placeholder**, not derived from lab data — it exists to exercise the pipeline end-to-end, not to produce a scientifically valid reading.
 
 ---
 
@@ -29,8 +44,10 @@ The full concept — technology architecture, operations model, and economic/pol
 
 - [x] Concept & full blueprint (technology, operations, economics, policy)
 - [x] Interactive HTML prospectus with toxicity-map mockup
-- [ ] **Vertical slice** — upload a colorimetric-strip photo + reference card → normalized reading → stored in a database → shown on a live map
-- [ ] Citizen data-validation pipeline (reference-card white-balance, outlier/geo checks)
+- [x] **Vertical slice (local)** — upload a colorimetric-strip photo + reference card → normalized reading → stored in a database → shown on a live map
+- [ ] Hosted deploy (Supabase + Vercel) of the vertical slice
+- [ ] Citizen data-validation pipeline (automatic reference-card detection, outlier/geo checks)
+- [ ] Real, lab-derived calibration curve(s)
 - [ ] Predictive Bio-Mapping engine (contamination signature → prescriptive blueprint)
 - [ ] Pilot Zone deployment (single high-contamination block)
 
