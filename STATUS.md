@@ -8,19 +8,20 @@ _Last updated: 2026-07-03_
 
 ## 🎯 Current goal
 
-Publish the interactive blueprint via GitHub Pages. **Deciding by tonight** whether to proceed to building the MycoFilter software (leaning: build). Plan account: **Claude Pro** (rolling usage limits — build in small committed increments).
+Blueprint is now **published live** via GitHub Pages. **Deciding by tonight** whether to proceed to building the MycoFilter software (leaning: build). Plan account: **Claude Pro** (rolling usage limits — build in small committed increments).
 
 ## ✅ Done
 
 - Full blueprint written in two forms: `BLUEPRINT.md` (Markdown) and `index.html` (interactive, with toxicity-map demo + KPI dashboard).
 - Local repo initialized, merged with the pre-existing GitHub repo (kept `LICENSE`, folded in the "gift to the world" tagline). Old name "mycotechnix" fully removed.
-- Renamed `mycofilter-blueprint.html` → `index.html` and updated all links, ready for GitHub Pages.
+- Renamed `mycofilter-blueprint.html` → `index.html`, updated all links.
+- **Authenticated GitHub (`gh`), pushed to `main`, and enabled GitHub Pages** (source: `main` branch, `/` root). **Live at https://elpinyeknom.github.io/mycoFilter/**
 
-## 🔜 Next step (do this first)
+## 🔜 Next step (the decision)
 
-1. **Authenticate & push:** user runs `gh auth login` in the session, then Claude runs `git push -u origin main`.
-2. **Enable GitHub Pages:** source = `main` branch, `/` root. Site will be at https://elpinyeknom.github.io/mycoFilter/
-3. **Decision point:** build the software, or keep as a pitch doc? (User deciding tonight.)
+**Build the software, or keep as a pitch doc?** (User deciding tonight, leaning build.)
+- If **build**: define the vertical-slice scope + tech stack, then start (see milestone below).
+- If **pitch**: blueprint is already published and shareable — done for now.
 
 ## 🧭 If building — the first milestone
 
