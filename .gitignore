@@ -22,9 +22,3 @@ venv/
 # Next.js
 .next/
 next-env.d.ts
-
-# Local SQLite data + uploaded photos (not committed)
-data/*.db
-data/*.db-*
-public/uploads/*
-!public/uploads/.gitkeep

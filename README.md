@@ -21,18 +21,30 @@ The full concept — technology architecture, operations model, and economic/pol
 
 ## 🚦 Project Status
 
-**Stage: Vertical slice (local dev).** The blueprint is published, and a first working slice of the software now runs locally: upload a strip+reference-card photo, tap the two color zones, get a normalized reading stored in a database and plotted on a live map. See "Running locally" below. Hosted deployment, real computer-vision card detection, and lab-validated calibration are still ahead — see the roadmap.
+**Stage: hosted deploy in progress.** The blueprint is published, and the vertical slice — upload a strip+reference-card photo, tap the two color zones, get a normalized reading stored in a database and plotted on a live map — now runs against a hosted Supabase backend (Postgres + Storage), on its way to a public Vercel URL. See "Running locally" below. Real computer-vision card detection and lab-validated calibration are still ahead — see the roadmap.
 
 ---
 
 ## 🖥️ Running locally
+
+This app stores readings and photos in [Supabase](https://supabase.com) (hosted Postgres + file storage) rather than local files, so you need a (free) Supabase project first:
+
+1. Create a Supabase project, then in its SQL Editor run the `CREATE TABLE readings (...)` snippet from `STATUS.md` (or the project setup notes) once.
+2. Create a public Storage bucket named `reading-images`.
+3. Copy the project's **URL** and **`service_role` secret key** (Settings → API) into a `.env.local` file in the repo root:
+   ```
+   SUPABASE_URL=...
+   SUPABASE_SERVICE_ROLE_KEY=...
+   ```
+
+Then:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Then open `http://localhost:3000` to submit a reading, or `http://localhost:3000/map` to view the live map. Data is stored in a local SQLite file (`data/mycofilter.db`) and uploaded photos in `public/uploads/` — both gitignored, nothing leaves your machine.
+Open `http://localhost:3000` to submit a reading, or `http://localhost:3000/map` to view the live map.
 
 **Known simplifications in this slice** (see `app/api/readings/route.ts` and `lib/colorimetry.ts`):
 - Reference-card and test-strip regions are located by the user tapping the photo, not by automatic marker detection.

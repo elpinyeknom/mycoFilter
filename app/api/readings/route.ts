@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mkdir, writeFile } from 'fs/promises';
-import path from 'path';
 import { randomUUID } from 'crypto';
 import { insertReading, listReadings } from '@/lib/db';
+import { uploadReadingImage } from '@/lib/storage';
 import { samplePixel, whiteBalanceCorrect, classifyReaction } from '@/lib/colorimetry';
 
-const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
-
 export async function GET() {
-  const readings = listReadings();
+  const readings = await listReadings();
   return NextResponse.json({ readings });
 }
 
@@ -38,19 +35,18 @@ export async function POST(request: NextRequest) {
 
   const extension = (image.name.split('.').pop() || 'jpg').toLowerCase();
   const filename = `${randomUUID()}.${extension}`;
-  await mkdir(UPLOADS_DIR, { recursive: true });
-  await writeFile(path.join(UPLOADS_DIR, filename), imageBuffer);
+  const imagePath = await uploadReadingImage(imageBuffer, filename);
 
   const referenceRgb = await samplePixel(imageBuffer, refX, refY);
   const rawRgb = await samplePixel(imageBuffer, testX, testY);
   const correctedRgb = whiteBalanceCorrect(referenceRgb, rawRgb);
   const reactionCategory = classifyReaction(referenceRgb, correctedRgb);
 
-  const reading = insertReading({
+  const reading = await insertReading({
     created_at: new Date().toISOString(),
     lat,
     lng,
-    image_path: `/uploads/${filename}`,
+    image_path: imagePath,
     analyte: 'lead',
     reference_rgb: JSON.stringify(referenceRgb),
     raw_rgb: JSON.stringify(rawRgb),
