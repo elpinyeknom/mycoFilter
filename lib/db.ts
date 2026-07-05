@@ -17,7 +17,7 @@ db.exec(`
     reference_rgb TEXT NOT NULL,
     raw_rgb TEXT NOT NULL,
     corrected_rgb TEXT NOT NULL,
-    estimated_ppm REAL NOT NULL,
+    reaction_category TEXT NOT NULL,
     notes TEXT
   );
 `);
@@ -32,7 +32,7 @@ export interface Reading {
   reference_rgb: string;
   raw_rgb: string;
   corrected_rgb: string;
-  estimated_ppm: number;
+  reaction_category: string;
   notes: string | null;
 }
 
@@ -41,9 +41,9 @@ export function insertReading(
 ): Reading {
   const stmt = db.prepare(`
     INSERT INTO readings
-      (created_at, lat, lng, image_path, analyte, reference_rgb, raw_rgb, corrected_rgb, estimated_ppm, notes)
+      (created_at, lat, lng, image_path, analyte, reference_rgb, raw_rgb, corrected_rgb, reaction_category, notes)
     VALUES
-      (@created_at, @lat, @lng, @image_path, @analyte, @reference_rgb, @raw_rgb, @corrected_rgb, @estimated_ppm, @notes)
+      (@created_at, @lat, @lng, @image_path, @analyte, @reference_rgb, @raw_rgb, @corrected_rgb, @reaction_category, @notes)
   `);
   const info = stmt.run(reading);
   return { id: Number(info.lastInsertRowid), ...reading };

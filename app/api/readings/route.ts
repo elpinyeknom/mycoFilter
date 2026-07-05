@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
 import { randomUUID } from 'crypto';
 import { insertReading, listReadings } from '@/lib/db';
-import { samplePixel, whiteBalanceCorrect, estimatePpm } from '@/lib/colorimetry';
+import { samplePixel, whiteBalanceCorrect, classifyReaction } from '@/lib/colorimetry';
 
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   const referenceRgb = await samplePixel(imageBuffer, refX, refY);
   const rawRgb = await samplePixel(imageBuffer, testX, testY);
   const correctedRgb = whiteBalanceCorrect(referenceRgb, rawRgb);
-  const estimatedPpm = estimatePpm(correctedRgb);
+  const reactionCategory = classifyReaction(referenceRgb, correctedRgb);
 
   const reading = insertReading({
     created_at: new Date().toISOString(),
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     reference_rgb: JSON.stringify(referenceRgb),
     raw_rgb: JSON.stringify(rawRgb),
     corrected_rgb: JSON.stringify(correctedRgb),
-    estimated_ppm: estimatedPpm,
+    reaction_category: reactionCategory,
     notes: typeof notes === 'string' && notes.length > 0 ? notes : null,
   });
 

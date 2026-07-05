@@ -6,21 +6,29 @@ import L from 'leaflet';
 import Link from 'next/link';
 import 'leaflet/dist/leaflet.css';
 
+type ReactionCategory = 'none' | 'mild' | 'strong';
+
 interface Reading {
   id: number;
   created_at: string;
   lat: number;
   lng: number;
   image_path: string;
-  estimated_ppm: number;
+  reaction_category: ReactionCategory;
   notes: string | null;
 }
 
 const DEFAULT_CENTER: [number, number] = [39.8283, -98.5795]; // continental US centroid
 
-function severityColor(ppm: number): string {
-  if (ppm < 50) return '#16a34a'; // green
-  if (ppm < 200) return '#eab308'; // yellow
+const REACTION_LABELS: Record<ReactionCategory, string> = {
+  none: 'No visible reaction',
+  mild: 'Mild reaction',
+  strong: 'Strong reaction',
+};
+
+function severityColor(category: ReactionCategory): string {
+  if (category === 'none') return '#16a34a'; // green
+  if (category === 'mild') return '#eab308'; // yellow
   return '#dc2626'; // red
 }
 
@@ -74,13 +82,13 @@ export default function MapClient() {
               key={reading.id}
               center={[reading.lat, reading.lng]}
               radius={10}
-              pathOptions={{ color: severityColor(reading.estimated_ppm), fillOpacity: 0.7 }}
+              pathOptions={{ color: severityColor(reading.reaction_category), fillOpacity: 0.7 }}
             >
               <Popup>
                 <div className="max-w-[200px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={reading.image_path} alt="strip" className="mb-1 w-full rounded" />
-                  <p className="font-medium">{reading.estimated_ppm.toFixed(1)} ppm (lead, est.)</p>
+                  <p className="font-medium">{REACTION_LABELS[reading.reaction_category]} (lead)</p>
                   <p className="text-xs text-stone-500">
                     {new Date(reading.created_at).toLocaleString()}
                   </p>

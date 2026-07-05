@@ -4,6 +4,13 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 
 type Point = { x: number; y: number }; // original-image pixel space
+type ReactionCategory = 'none' | 'mild' | 'strong';
+
+const REACTION_LABELS: Record<ReactionCategory, string> = {
+  none: 'No visible reaction',
+  mild: 'Mild reaction detected',
+  strong: 'Strong reaction detected',
+};
 
 export default function SubmitPage() {
   const imgRef = useRef<HTMLImageElement>(null);
@@ -16,7 +23,7 @@ export default function SubmitPage() {
   const [geoStatus, setGeoStatus] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ estimated_ppm: number } | null>(null);
+  const [result, setResult] = useState<{ reaction_category: ReactionCategory } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -125,9 +132,14 @@ export default function SubmitPage() {
       </header>
 
       <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
-        <strong>Triage only.</strong> This screening estimate is not a substitute for
-        accredited laboratory analysis. Do not use it alone for health or land-use decisions.
-        Calibration values in this demo are placeholders, not lab-validated.
+        <strong>Triage only.</strong> This rhodizonate-style strip can indicate a color
+        reaction to lead, but — like real consumer lead test kits — it cannot tell you an
+        exact concentration. A reaction (mild or strong) means: send a sample to an
+        accredited lab. For reference, the EPA's residential soil screening level is{' '}
+        <strong>200 ppm</strong> (<strong>100 ppm</strong> if there are other lead sources
+        nearby, such as old paint or lead pipes), and <strong>400+ ppm</strong> is treated as
+        hazardous in bare-soil play areas — this app cannot tell you which of those ranges
+        you're in.
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -236,8 +248,9 @@ export default function SubmitPage() {
         <div className="mt-6 rounded-md border border-emerald-300 bg-emerald-50 p-4">
           <p className="font-medium">Reading saved.</p>
           <p className="text-sm text-stone-700">
-            Estimated lead reading: <strong>{result.estimated_ppm.toFixed(1)} ppm</strong>{' '}
-            (placeholder calibration)
+            <strong>{REACTION_LABELS[result.reaction_category]}</strong>
+            {result.reaction_category !== 'none' &&
+              ' — send a sample to an accredited lab for an exact ppm reading.'}
           </p>
           <Link href="/map" className="mt-2 inline-block text-sm underline">
             View it on the map →

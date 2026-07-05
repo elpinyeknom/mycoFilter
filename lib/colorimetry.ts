@@ -51,37 +51,30 @@ export function whiteBalanceCorrect(referenceRgb: RGB, rawRgb: RGB): RGB {
   ) as RGB;
 }
 
-/**
- * PLACEHOLDER calibration table for lead (rhodizonate-style strip: pale pink at low
- * concentration, deepening to magenta/maroon at high concentration). These control
- * points are illustrative only, not derived from lab data — replace with a real
- * calibration curve before this reading is used for anything beyond demoing the
- * pipeline. See BLUEPRINT.md safety framing: triage only, never a lab substitute.
- */
-const LEAD_CALIBRATION_CURVE: { rgb: RGB; ppm: number }[] = [
-  { rgb: [245, 240, 238], ppm: 0 }, // near-white, no reaction
-  { rgb: [240, 205, 210], ppm: 25 }, // pale pink
-  { rgb: [225, 150, 170], ppm: 75 }, // light pink
-  { rgb: [200, 90, 120], ppm: 150 }, // pink
-  { rgb: [160, 40, 80], ppm: 300 }, // magenta
-  { rgb: [100, 20, 45], ppm: 600 }, // deep maroon
-];
+export type ReactionCategory = 'none' | 'mild' | 'strong';
 
 function rgbDistance(a: RGB, b: RGB): number {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
 }
 
-/** Inverse-distance-weighted interpolation over the placeholder calibration curve. */
-export function estimatePpm(correctedRgb: RGB): number {
-  const EPS = 1e-3;
-  let weightedSum = 0;
-  let weightTotal = 0;
-  for (const point of LEAD_CALIBRATION_CURVE) {
-    const distance = rgbDistance(correctedRgb, point.rgb);
-    if (distance < EPS) return point.ppm;
-    const weight = 1 / distance ** 2;
-    weightedSum += weight * point.ppm;
-    weightTotal += weight;
-  }
-  return weightedSum / weightTotal;
+/**
+ * Rhodizonate lead test strips are a threshold indicator — the reagent turns pink/red
+ * when lead is present above its detection limit — not a continuous colorimeter. There
+ * is no published, general-purpose color→ppm chart for this chemistry (EPA and NIST
+ * test-kit evaluations describe it as presence/absence, not quantitative), so instead
+ * of inventing a fake ppm number, this classifies how far the corrected test-strip
+ * color has shifted from the reference card's neutral tone. The distance thresholds
+ * below are an interim heuristic, not a validated strip/camera calibration — see
+ * BLUEPRINT.md and README.md: triage only, never a lab substitute. A real ppm number
+ * requires accredited lab testing; EPA's residential soil screening levels (200 ppm
+ * general, 100 ppm with other lead sources nearby, 400+ ppm hazardous in play areas)
+ * are shown as static reference context in the UI, not derived from the photo.
+ */
+const REACTION_DISTANCE_THRESHOLDS = { mild: 20, strong: 60 };
+
+export function classifyReaction(referenceRgb: RGB, correctedRgb: RGB): ReactionCategory {
+  const distance = rgbDistance(correctedRgb, referenceRgb);
+  if (distance < REACTION_DISTANCE_THRESHOLDS.mild) return 'none';
+  if (distance < REACTION_DISTANCE_THRESHOLDS.strong) return 'mild';
+  return 'strong';
 }

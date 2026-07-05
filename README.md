@@ -36,7 +36,7 @@ Then open `http://localhost:3000` to submit a reading, or `http://localhost:3000
 
 **Known simplifications in this slice** (see `app/api/readings/route.ts` and `lib/colorimetry.ts`):
 - Reference-card and test-strip regions are located by the user tapping the photo, not by automatic marker detection.
-- The lead ppm calibration curve is a **placeholder**, not derived from lab data — it exists to exercise the pipeline end-to-end, not to produce a scientifically valid reading.
+- Readings are reported as a **category** — no reaction / mild / strong — not a precise ppm number. This isn't a placeholder waiting to be swapped for "real" numbers: rhodizonate-style lead test strips are a threshold indicator in reality too (the reagent changes color once lead is present above its detection limit), not a continuous colorimeter, and there's no published general-purpose color→ppm chart for this chemistry (per EPA/NIST test-kit evaluations). The category is a heuristic based on how far the corrected test-strip color has shifted from the reference card, pending real strip/camera calibration. The app shows EPA's actual residential soil screening levels (200 ppm general, 100 ppm with other lead sources nearby, 400+ ppm hazardous in play areas) as static reference context — a reaction here doesn't tell you which of those ranges you're in; only an accredited lab can.
 
 ---
 
@@ -47,7 +47,7 @@ Then open `http://localhost:3000` to submit a reading, or `http://localhost:3000
 - [x] **Vertical slice (local)** — upload a colorimetric-strip photo + reference card → normalized reading → stored in a database → shown on a live map
 - [ ] Hosted deploy (Supabase + Vercel) of the vertical slice
 - [ ] Citizen data-validation pipeline (automatic reference-card detection, outlier/geo checks)
-- [ ] Real, lab-derived calibration curve(s)
+- [ ] Real, lab-derived quantitative calibration (if/where the underlying test chemistry supports it — see "Known simplifications")
 - [ ] Predictive Bio-Mapping engine (contamination signature → prescriptive blueprint)
 - [ ] Pilot Zone deployment (single high-contamination block)
 
